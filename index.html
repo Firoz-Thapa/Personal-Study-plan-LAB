@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSP LAB</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Container */
+        .accordion-container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        thead {
+            background-color: green;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr {
+            background-color: #ffffff;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
+        }
+
+        tbody tr:hover {
+            background-color: #f9fbff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8fafe;
+        }
+
+        /* Editable Input Styling */
+        .editable-input, .editable-textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #d0d7e5;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #f5f7fa;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            color: #333;
+        }
+
+        /* Button Styling */
+        .save-button, .add-row-button, .edit-button, .delete-button {
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            padding: 10px 20px;
+            min-width: 100px;
+            margin: 5px;
+            white-space: nowrap;
+        }
+
+        .save-button, .add-row-button {
+            background-color: #0073e6;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 115, 230, 0.3);
+        }
+
+        .edit-button {
+            background-color: green;
+            color: #ffffff;
+        }
+
+        .delete-button {
+            background-color: #e63946;
+            color: #ffffff;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #d0d7e5;
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        .close-button {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            float: right;
+            margin-top: 10px;
+        }
+
+        .close-button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="accordion-container">
+    <table>
+        <thead onclick="toggleAccordion()" class="accordion-header">
+            <tr>
+                <th><span class="arrow">&#8250;</span> Compulsory or Not</th>
+                <th>Topic</th>
+                <th>Learning Outcome</th>
+                <th>Learning Outcome Information</th>
+                <th>Credits</th>
+                <th>Project</th>
+                <th>Confirmed By</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        
+        <tbody class="panel" id="data-table">
+            <tr>
+                <td><input type="text" class="editable-input" value="Compulsory" disabled ondblclick="zoomBox(this)"></td>
+                <td><input type="text" class="editable-input" value="Welding" disabled ondblclick="zoomBox(this)"></td>
+                <td><textarea class="editable-textarea" oninput="autoResize(this)" disabled ondblclick="zoomBox(this)">Detection of welding defects</textarea></td>
+                <td><textarea class="editable-textarea" oninput="autoResize(this)" disabled ondblclick="zoomBox(this)">Identify common welding defects such as porosity, cracks, etc.</textarea></td>
+                <td><input type="number" class="editable-input" value="2" disabled ondblclick="zoomBox(this)"></td>
+                <td><input type="text" class="editable-input" value="Project 1" disabled ondblclick="zoomBox(this)"></td>
+                <td><input type="text" class="editable-input" placeholder="Enter name" value="Eero" disabled ondblclick="zoomBox(this)"></td>
+                <td><input type="date" class="editable-input" value="2024-10-29" disabled ondblclick="zoomBox(this)"></td>
+                <td>
+                    <button class="edit-button" onclick="toggleEdit(this)">Edit</button>
+                    <button class="delete-button" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="add-row-button" onclick="addRow()">Add New Row</button>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal" id="zoomModal">
+    <div class="modal-content">
+        <textarea id="zoomedText"></textarea>
+        <button class="close-button" onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>
+    let currentZoomedElement = null;
+
+    function toggleAccordion() {
+        const panel = document.querySelector('.panel');
+        const arrow = document.querySelector('.arrow');
+
+        if (panel.style.display === "table-row-group") {
+            panel.style.display = "none";
+            arrow.classList.remove('down');
+        } else {
+            panel.style.display = "table-row-group";
+            arrow.classList.add('down');
+        }
+    }
+
+    function addRow() {
+        const table = document.getElementById('data-table');
+        const newRow = document.createElement('tr');
+        
+        newRow.innerHTML = `
+            <td><input type="text" class="editable-input" value="" disabled ondblclick="zoomBox(this)"></td>
+            <td><input type="text" class="editable-input" value="" disabled ondblclick="zoomBox(this)"></td>
+            <td><textarea class="editable-textarea" oninput="autoResize(this)" disabled ondblclick="zoomBox(this)"></textarea></td>
+            <td><textarea class="editable-textarea" oninput="autoResize(this)" disabled ondblclick="zoomBox(this)"></textarea></td>
+            <td><input type="number" class="editable-input" value="0" disabled ondblclick="zoomBox(this)"></td>
+            <td><input type="text" class="editable-input" value="" disabled ondblclick="zoomBox(this)"></td>
+            <td><input type="text" class="editable-input" placeholder="Enter name" disabled ondblclick="zoomBox(this)"></td>
+            <td><input type="date" class="editable-input" disabled ondblclick="zoomBox(this)"></td>
+            <td>
+                <button class="edit-button" onclick="toggleEdit(this)">Edit</button>
+                <button class="delete-button" onclick="deleteRow(this)">Delete</button>
+            </td>
+        `;
+        
+        table.appendChild(newRow);
+    }
+
+    function deleteRow(button) {
+        const row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+    function toggleEdit(button) {
+        const row = button.parentNode.parentNode;
+        const inputs = row.querySelectorAll('input, textarea');
+        const isEditing = button.textContent === 'Save';
+
+        inputs.forEach(input => input.disabled = isEditing); // Toggle the disabled property
+
+        button.textContent = isEditing ? 'Edit' : 'Save'; // Toggle button text
+    }
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    function zoomBox(element) {
+        const modal = document.getElementById('zoomModal');
+        const zoomedText = document.getElementById('zoomedText');
+
+        // Store the element so we can update it later
+        currentZoomedElement = element;
+
+        // Set the modal content to the current element's value
+        zoomedText.value = element.value || element.innerHTML;
+
+        // Show the modal
+        modal.style.display = 'flex';
+
+        // Allow editing if the original element is enabled
+        zoomedText.disabled = element.disabled;
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('zoomModal');
+        const zoomedText = document.getElementById('zoomedText');
+
+        // Update the original element's value with any changes
+        if (currentZoomedElement) {
+            currentZoomedElement.value = zoomedText.value || currentZoomedElement.innerHTML;
+        }
+
+        // Hide the modal
+        modal.style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
